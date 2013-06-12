@@ -1,0 +1,291 @@
+
+\documentclass[10pt]{tufte-handout}
+%\pagestyle{empty}
+\usepackage{amsmath}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+%\usepackage[scaled=0.9]{helvet}
+%\usepackage{enumitem}
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{lemma}[theorem]{Lema}
+\newtheorem{proposition}[theorem]{Proposici\'on}
+\newtheorem{corollary}[theorem]{Corolario}
+\usepackage{amsfonts}
+\usepackage{color}
+\newcommand{\comment}[1]{}
+
+
+\newenvironment{proof}[1][Proof]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{definition}[1][Definici\'on]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{example}[1][Ejemplo]{\begin{trivlist}
+\item[\hskip \labelsep {\itshape #1}]}{\end{trivlist}}
+\newenvironment{remark}[1][Observaci\'on]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\usepackage{dcolumn}
+\newcommand{\qed}{\nobreak \ifvmode \relax \else
+      \ifdim\lastskip<1.5em \hskip-\lastskip
+      \hskip1.5em plus0em minus0.5em \fi \nobreak
+      \vrule height0.75em width0.5em depth0.25em\fi}
+\newcommand{\PP}{{\cal P}}
+\newcommand{\EE}{\textrm E}
+\newcommand{\vasx}{\{X_n,n=1,2,\ldots\}}
+\newcommand{\vasy}{\{Y_n,n=1,2,\ldots\}}
+%\usepackage{simplemargins}
+%\usepackage{layout}
+%\usepackage[letterpaper,left=0.8in,hmarginratio=10:28, marginparwidth=1.5in,bottom=1in]{geometry}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+%\usepackage[dvips]{graphicx}
+%\pagestyle{headings}
+%\setlength\parindent{15pt}
+%\pdfpagewidth 8.5in
+\usepackage[spanish]{babel}
+\hyphenpenalty=0
+%\pdfpageheight 11in 
+%\oddsidemargin 0.0in
+%\evensidemargin -0.0in
+%\textwidth 4.5in
+%\fontsize{8}{10}
+%\selectfont
+%\setleftmargin 1in
+%\setrightmargin 4.5in
+%\marginparwidth 2.5in, includemp
+%\newcommand{\superscript}[1]{\ensuremath{^\textrm{#1}}}
+%\newcommand{\subscript}[1]{\ensuremath{_\textrm{#1}}}
+
+\title{Práctica gráfica en tesis de Actuaría (ITAM, 1990-2007)}
+\author{Felipe González y grupo de Estadística Aplicada I, Otoño 2007}
+
+
+
+
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+%\maketitle
+%\normalsize
+%\raggedright
+%\setlength\parindent{10pt}
+\definecolor{dgray}{rgb}{0.5,0.5,0.5}
+\definecolor{MyGray}{rgb}{0.94,0.95,0.97}
+\makeatletter\newenvironment{graybox}{%
+\begin{lrbox}{\@tempboxa}
+   \begin{minipage}[t]{11.5cm}}
+   {\end{minipage}\end{lrbox}%
+    \colorbox{MyGray}{\usebox{\@tempboxa}
+}}\makeatother
+
+\definecolor{lgray}{rgb}{0.94,0.9,0.9}
+\makeatletter\newenvironment{lgraybox}{%
+\begin{lrbox}{\@tempboxa}
+   \begin{minipage}[t]{11.5cm}}
+   {\end{minipage}\end{lrbox}%
+    \colorbox{lgray}{\usebox{\@tempboxa}
+}}\makeatother
+
+\maketitle
+
+\begin{abstract}
+Los métodos gráficos
+son una herramienta poderosa en
+el análisis de datos. En contraste con otros métodos,
+sólo hasta recientemente han aparecido guías sólidas
+(aunque todavía parciales)
+de lo que constituye la buena práctica gráfica,
+y estas guías son relativamente poco conocidas.
+
+Un punto de partida para la difusión de estas guías
+es el diagnóstico de la práctica actual, que varía
+mucho según el contexto (periódicos, industria,
+publicaciones científicas). 
+En este
+trabajo buscamos producir estimaciones de
+varios indicadores básicos para las tesis de Actuaría
+en el periodo 1990-2007: qué tanto y qué tipos
+de gráficas se usan, y 
+algunos indicadores de la calidad de la práctica gráfica.
+
+Mostramos que las gráficas son
+utilizadas comunmente en las tesis de actuaría (en particular
+las de dispersión y las de barras),
+y que podrían mejorar en varios aspectos: en primer lugar,
+reduciendo la basura gráfica (rejillas, tramas, efectos en 3D), 
+en segundo lugar, ampliando el repertorio de tipos de gráficas
+(gráficas de caja y brazos, gráficas de páneles múltiples como
+matrices de gráficas dispersión), y 
+en tercer lugar, más concretamente, sustituyendo las gráficas
+de barras por mejores alternativas: tablas, diagramas de caja
+y brazos, o diagramas de puntos.
+
+\end{abstract}
+
+\subsection{Resultados principales y Recomendaciones}
+
+\subsubsection{Densidad gráfica}
+
+Una buena parte de las tesis de actuaría
+contiene gráficas de datos ($84\%$ \textcolor{dgray}{$\pm 6\%$}).
+Excluyendo páginas de bibliografía, 
+las tesis con gráficas tienen un promedio de
+19 \textcolor{dgray}{$\pm 3$} gráficas por cada 100 páginas, y
+una mediana de 14.5 \textcolor{dgray}{$\pm 3$} gráficas por
+cada 100 páginas. Alrededor del 90\% de las tesis
+con gráficas 
+en la muestra de distribuyen entre 0 y 30
+ gráficas por 100 páginas. Por arriba de esto, tenemos
+una cola de tesis que son mucho más intensivas en
+su uso de métodos gráfics. Abajo mostramos la distribución
+muestral con algunas referencias más o menos conocidas.
+\sidenote{Cleveland, William S., {\it The Elements of
+Graphing Data}, Hobart Press, 1994.
+
+\vspace{\baselineskip}
+
+{Venables, W.N. y Ripley, B.D., {\it Modern
+ Applied Statistics with S-PLUS}, Springer, 2002.}
+
+\vspace{\baselineskip}
+
+{Pole A., West M. y Harrison, J., 
+{\it Applied Bayesian Forecasting and Time Series
+Analysis}, Chapman \& Hall, 1994.}
+
+\vspace{\baselineskip}
+
+{Hoaglin, D.C., Mosteller, F. y Tukey, J.W.,
+{\it Understanding Robust and Exploratory Data Analysis},
+Wiley, 1983.}
+
+\vspace{\baselineskip}
+
+{Rossi, P.E., Allenby, G. y McCulloch, R.,
+{\it Bayesian Statistics and Marketing}, Wiley, 2005.}
+
+\vspace{\baselineskip}
+
+{Klugman, S. A., {\it Loss Models: From Data to Decisions},
+Wiley-Interscience, 2004.}
+} 
+
+\begin{center}
+\includegraphics[keepaspectratio,width=12cm]{q_grafspag2.eps}
+\end{center}
+
+Donde vemos también que no hay una relación simple entre
+el número de páginas y la densidad gráfica, aunque
+la gráfica de la izquierda suguiere que las tesis con
+densidades atípicamente altas tienden a ser cortas.
+
+Los tres casos que tienen densidad gráfica mayor
+al libro de Cleveland son interesantes: el mayor,
+con 123 gráficas por 100 páginas (IAC-2005-EAR, 
+{\it Análisis comparativo del nivel de religiosidad en estudiantes católicos de dos universidades...})
+contiene algunas gráficas de barras y muchas gráficas de pay decorativas 
+acompañadas de tablas de datos (que es el estilo
+usual de la graficación de datos en la mercadotecnia). El segundo
+(IAC 2003.RRI) es un dato atípico por varias razones: se trata de una
+tesis de 31 páginas (sin contar bibliografía). Finalmente
+tenemos IAC-1999-FAN, {\it Sistema Bonus-Malus 200 para
+la conservación de la cartera}, que es atípica por el uso
+extensivo de histogramas (para representar distribuciones de
+pérdida).
+
+\margintable{
+\begin{tabular}{lrr}
+Tipo  & \% de tesis & \\
+\hline
+%Dispersión & 91 \textcolor{dgray}{5} \\
+Dispersión & 68 &\tiny{9} \\
+Barras & 51 &\tiny{10} \\
+Serie de tiempo & 51 &\tiny{ 10} \\
+Histograma & 20  &\tiny{7} \\
+Pay & 17 &\tiny{7} \\
+Caja y brazos & 9 &\tiny{ 5} \\
+Mapas & 4 &\tiny{4} \\
+Otras & 2 &\tiny{3} \\
+\end{tabular}
+
+{Estimaciones para la población de tesis
+con al menos una gráfica de datos, basadas en 102 tesis.
+}
+
+}
+
+
+
+\subsubsection{Tipos de gráficas}
+
+Las gráficas más comunes son las dispersión (que no
+son series de tiempo). En la tabla de la derecha mostramos
+nuestras estimaciones para varias tipos de gráficas que
+fueron medidos para la población de tesis que tienen al
+menos una gráfica de datos.  
+
+
+
+
+\subsubsection{Indicadores básicos de calidad gráfica}
+
+En nuestro estudio tenemos dos indicadores básicos de la 
+calidad de cada gráfica:
+\begin{itemize}
+\item Contenido de basura gráfica ({\em chartjunk} de Tufte, 
+como efectos 3d, {\em grid} o rejillas
+que ocultan o dificultan la percepción de los puntos de datos, marcos 
+ superfluos, etc.).
+\item Si la explicación de la gráfica está en la misma página de la gráfica o
+no. En el trabajo gráfico serio texto, tablas, diagramas y gráficas se
+integran para mostrar la evidencia (**Tufte**).    
+\end{itemize}
+
+**Basura**
+Series de tiempo ok - el caso grave es el de las gráficas de barras.
+Por tesis, mostrar ejemplos - collage!
+
+Hablar también de barras de 3+ variables - este es un problema
+
+**Explicación en la misma página - agregado
+
+
+
+
+
+\subsubsection{Otros resultados}
+En el tiempo, tablas, discutir gráficas analíticas, número
+de páginas por tesis, también en el tiempo.
+
+
+\subsubsection{Metodología}
+
+Describir marco muestral
+
+Muestreo aleatorio por conglomerados - parte bietápica para
+otra ocasión. 
+
+Describir cuestionario y problemas que se encontraron
+**Nota: revisar la cuestión de bietápico con UPMs chicas**
+
+**Multipanel - poco usado
+
+
+Describir funcionamiento de grupo.
+
+\subsubsection{Antecedentes}
+
+Explicación de basura gráfica, por qué es importante esto
+(oportunidades perdidas, claridad, etc.)
+
+
+
+\bibliographystyle{plain}
+\bibliography{referencias}
+
+
+
+\end{document}
+
+
+
