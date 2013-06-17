@@ -65,3 +65,63 @@ coord.etiquetas <- function(df, x, y,
         df$b <- salida.plabel$y
         df
 }    
+
+
+library(gridExtra)
+tabla_grafica <- function(tablas.m){
+  #tablas.m <- melt(tab, id.vars=c('var','dim'))
+  
+      dat.ann <- subset(tablas.m,var==unique(tablas.m$var)[1])
+    num.cat <- length(unique(dat.ann$variable))
+    num.reng <- length(unique(dat.ann$dim))
+  dat.ann.1 <- dat.ann[1,,drop=FALSE]
+  dat.ann.1$num.reng <- num.reng
+  dat.ann.1$num.cat <- num.cat
+  dat.ann.1$variable <- NULL
+  dat.ann.1 <- data.frame(dat.ann.1, variable=unique(dat.ann$variable))
+  #print(num.cat)
+  #print(num.reng)
+  if(length(unique(tablas.m$color))>1){
+    paleta <- scale_color_brewer(palette='RdGy')
+  } else {
+    paleta <- scale_color_manual(values=c('gray80','black'))
+  }
+  tablas.m$variable <- factor(tablas.m$variable, levels=unique(dat.ann$variable))
+  p <- ggplot(tablas.m, aes(y=dim,x=variable, label=value)) +
+    geom_text(aes(colour=color)) + facet_grid(var~., scales='free_y',
+      as.table=T, space='free_y') +
+    geom_text(colour='black', alpha=0.4)+
+    xlab('')+ ylab('')+
+    theme(axis.text.y=element_text(size=12))+
+   theme(text=element_text(size=12, family="Gill Sans MT"))+
+    theme(title=element_text(size=12, family="Gill Sans MT"))+
+    theme(#panel.grid=element_blank(),
+    panel.border=element_blank(),
+      axis.ticks=element_blank(),
+      strip.background=element_blank(),
+      legend.position='none',
+      axis.text.x = element_blank(),
+      panel.border=element_blank(),
+      panel.margin=unit(1, 'lines'),
+      strip.text.y=element_text(angle=90, colour='gray'),
+      legend.background=element_blank()
+      )+
+    paleta +
+  geom_text(data=dat.ann.1,aes(y=num.reng, x=1:num.cat, 
+    label=as.character(unique(variable))),
+    colour='gray20', vjust=-1.5, size=3.8,family="Gill Sans MT")  
+  gt <- ggplot_gtable(ggplot_build(p))
+ gt$layout$clip[gt$layout$name == "panel"] <- "off"
+print(grid.draw(gt))
+#p
+}
+
+corregir <- function(latex_table){
+  printed_table = (latex_table)
+printed_table = sub("backslash", "\\", printed_table)
+printed_table = sub("\\\\}", "}", printed_table)
+printed_table = sub("\\\\\\{", "{", printed_table)
+printed_table = sub("\\$", "\\", printed_table)
+printed_table = sub("\\$", "\\", printed_table)
+  printed_table
+}

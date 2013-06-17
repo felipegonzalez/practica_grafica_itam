@@ -1,60 +1,32 @@
+\documentclass{tufte-handout}
 
-\documentclass[10pt]{tufte-handout}
-%\pagestyle{empty}
+%\geometry{showframe}% for debugging purposes -- displays the margins
+\usepackage[utf8]{inputenc}
 \usepackage{amsmath}
-\usepackage{epsfig}
-\usepackage{graphicx}
-\usepackage{wrapfig}
-%\usepackage[scaled=0.9]{helvet}
-%\usepackage{enumitem}
-\newtheorem{theorem}{Teorema}[section]
-\newtheorem{lemma}[theorem]{Lema}
-\newtheorem{proposition}[theorem]{Proposici\'on}
-\newtheorem{corollary}[theorem]{Corolario}
-\usepackage{amsfonts}
-\usepackage{color}
-\newcommand{\comment}[1]{}
-
-
-\newenvironment{proof}[1][Proof]{\begin{trivlist}
-\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
-\newenvironment{definition}[1][Definici\'on]{\begin{trivlist}
-\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
-\newenvironment{example}[1][Ejemplo]{\begin{trivlist}
-\item[\hskip \labelsep {\itshape #1}]}{\end{trivlist}}
-\newenvironment{remark}[1][Observaci\'on]{\begin{trivlist}
-\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
-\usepackage{dcolumn}
-\newcommand{\qed}{\nobreak \ifvmode \relax \else
-      \ifdim\lastskip<1.5em \hskip-\lastskip
-      \hskip1.5em plus0em minus0.5em \fi \nobreak
-      \vrule height0.75em width0.5em depth0.25em\fi}
-\newcommand{\PP}{{\cal P}}
-\newcommand{\EE}{\textrm E}
-\newcommand{\vasx}{\{X_n,n=1,2,\ldots\}}
-\newcommand{\vasy}{\{Y_n,n=1,2,\ldots\}}
-%\usepackage{simplemargins}
-%\usepackage{layout}
-%\usepackage[letterpaper,left=0.8in,hmarginratio=10:28, marginparwidth=1.5in,bottom=1in]{geometry}
-\usepackage{ucs}
-\usepackage[utf8x]{inputenc}
-%\usepackage[dvips]{graphicx}
-%\pagestyle{headings}
-%\setlength\parindent{15pt}
-%\pdfpagewidth 8.5in
 \usepackage[spanish]{babel}
-\hyphenpenalty=0
-%\pdfpageheight 11in 
-%\oddsidemargin 0.0in
-%\evensidemargin -0.0in
-%\textwidth 4.5in
-%\fontsize{8}{10}
-%\selectfont
-%\setleftmargin 1in
-%\setrightmargin 4.5in
-%\marginparwidth 2.5in, includemp
-%\newcommand{\superscript}[1]{\ensuremath{^\textrm{#1}}}
-%\newcommand{\subscript}[1]{\ensuremath{_\textrm{#1}}}
+% Set up the images/graphics package
+\usepackage{graphicx}
+\usepackage{colortbl}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+%\usepackage[table]{xcolor}
+% The following package makes prettier tables.  We're all about the bling!
+\usepackage{booktabs}
+
+% The units package provides nice, non-stacked fractions and better spacing
+% for units.
+\usepackage{units}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+% Small sections of multiple columns
+\usepackage{multicol}
+
+% Provides paragraphs of dummy text
+\usepackage{lipsum}
 
 \title{Práctica gráfica en tesis de Actuaría (ITAM, 1990-2007)}
 \author{Felipe González y grupo de Estadística Aplicada I, Otoño 2007}
@@ -64,27 +36,11 @@
 
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 %\maketitle
 %\normalsize
 %\raggedright
 %\setlength\parindent{10pt}
-\definecolor{dgray}{rgb}{0.5,0.5,0.5}
-\definecolor{MyGray}{rgb}{0.94,0.95,0.97}
-\makeatletter\newenvironment{graybox}{%
-\begin{lrbox}{\@tempboxa}
-   \begin{minipage}[t]{11.5cm}}
-   {\end{minipage}\end{lrbox}%
-    \colorbox{MyGray}{\usebox{\@tempboxa}
-}}\makeatother
 
-\definecolor{lgray}{rgb}{0.94,0.9,0.9}
-\makeatletter\newenvironment{lgraybox}{%
-\begin{lrbox}{\@tempboxa}
-   \begin{minipage}[t]{11.5cm}}
-   {\end{minipage}\end{lrbox}%
-    \colorbox{lgray}{\usebox{\@tempboxa}
-}}\makeatother
 
 \maketitle
 
@@ -108,39 +64,136 @@ en el periodo 1990-2007: qué tanto y qué tipos
 de gráficas se usan, y 
 algunos indicadores de la calidad de la práctica gráfica.
 
-Mostramos que las gráficas son
-utilizadas comunmente en las tesis de actuaría (en particular
-las de dispersión y las de barras),
-y que podrían mejorar en varios aspectos: en primer lugar,
-reduciendo la basura gráfica (rejillas, tramas, efectos en 3D), 
-en segundo lugar, ampliando el repertorio de tipos de gráficas
-(gráficas de caja y brazos, gráficas de páneles múltiples como
-matrices de gráficas dispersión), y 
-en tercer lugar, más concretamente, sustituyendo las gráficas
-de barras por mejores alternativas: tablas, diagramas de caja
-y brazos, o diagramas de puntos.
 
 \end{abstract}
 
+<<echo=FALSE, include=FALSE>>=
+library(ProjectTemplate)
+setwd('..')
+load.project()
+ls()
+library(survey)
+library(xtable)
+base.de.datos.ver2.fg1$total.pob <- 469
+base.de.datos.ver2.fg1$cont.graf <- as.numeric(base.de.datos.ver2.fg1$tipo==1)
+datos <- base.de.datos.ver2.fg1
+datos <- ddply(datos, 'ID', transform, num.graficas=sum(cont.graf))
+datos$grafs.100p <- 100*datos$num.graficas/datos$PAGS
+datos$X3D[is.na(datos$X3D)] <- 0
+datos$graf_sola <- datos$MULTI_NUM==0
+datos$una.var <- datos$X1VAR
+datos$cont.basura <- datos$X3D+datos$REJILLA+datos$TRAMA+datos$ETIQUETAS+datos$FONDO_OBS+
+  datos$MARCO
+des.1 <- svydesign(ids=~ID, fpc=~total.pob, data=datos)
+datos.upm <- ddply(datos, c('ID'), summarise, num.paginas=mean(PAGS),
+  num.graficas=mean(num.graficas), num.tablas=mean(TABLAS), num.diagramas=mean(DIAGRAMAS),
+  año=AÑO[1], total.pob = mean(total.pob), dispersion=sum(DISPERSION),
+  barras=sum(BARRAS),stiempo=sum(SERIE_TIEMPO),histograma=sum(HISTOGRAMA),
+  CIRCULAR=sum(CIRCULAR), cajab=sum(CAJAB), mapas=sum(MAPAS),otras=sum(OTRAS),
+  cont.basura = sum(cont.basura>0), analiticas=mean(ANALITICAS))
+datos.upm$grafs.100p <- 100*datos.upm$num.graficas/datos.upm$num.paginas
+datos.upm$prop.basura <- datos.upm$cont.basura/datos.upm$num.graficas
+datos.upm$basura <- as.numeric(datos.upm$cont.basura>0)
+des.upm <- svydesign(ids=~1, fpc=~total.pob, data=datos.upm)
+des.upm.rep <- as.svrepdesign(des.upm, type='subbootstrap', replicates=1000)
+@
+
+
 \subsection{Resultados principales y Recomendaciones}
 
-\subsubsection{Densidad gráfica}
 
-Una buena parte de las tesis de actuaría
-contiene gráficas de datos ($84\%$ \textcolor{dgray}{$\pm 6\%$}).
-Excluyendo páginas de bibliografía, 
-las tesis con gráficas tienen un promedio de
-19 \textcolor{dgray}{$\pm 3$} gráficas por cada 100 páginas, y
-una mediana de 14.5 \textcolor{dgray}{$\pm 3$} gráficas por
-cada 100 páginas. Alrededor del 90\% de las tesis
-con gráficas 
-en la muestra de distribuyen entre 0 y 30
- gráficas por 100 páginas. Por arriba de esto, tenemos
-una cola de tesis que son mucho más intensivas en
-su uso de métodos gráfics. Abajo mostramos la distribución
-muestral con algunas referencias más o menos conocidas.
-\sidenote{Cleveland, William S., {\it The Elements of
+Mostramos que las gráficas son
+utilizadas comunmente en las tesis de actuaría (en particular
+las de dispersión y las de barras),
+y que podrían mejorar en varios aspectos: 
+
+\begin{enumerate}
+\item Reduciendo la basura gráfica en particular rejillas y rellenos,
+\item Eliminando el uso de gráficas de pay, reduciendo el uso de gráficas
+de barras y sustituirlas por gráficas de puntos o tablas.
+\item Usando más ampliamente gráficas de páneles múltiples (pequeños
+múltiplos).
+\end{enumerate}
+
+
+\subsection{La mayor parte de las tesis de Actuaría requieren presentar datos
+en forma gráfica o tabular}
+
+
+Diferentes tesis, por su naturaleza, requieren de más o menos representaciones
+de datos, y la elección es utilizar gráficas o tablas. 
+El 95\% ${\pm 3}$\% de las tesis continen al menos una gráfica o una tabla,
+y el 80\% ${\pm 6}$\% contiene
+tanto gráficas como tablas.
+
+
+
+Las dos gráficas de abajo sugieren que después de 2000 se ha incrementado
+el uso y presentación 
+de datos en las tesis de Actuaría (total de gráficas y tablas presentadas),
+aún cuando la elección entre tablas y gráficas no ha cambiado (los estudiantes de actuaría deciden por tablas el  64\% ${\pm 5}$ \% de las veces. )
+
+Estos resultados pueden indicar que aún cuando se usa más representaciones de datos,
+estas representaciones no han aumentado en tamaño o complejidad, lo que usualmente
+requiere de gráficas en vez de tablas. Otra posible explicación es que las
+tablas cada vez se usan en situaciones donde gráficas serían más apropiadas.
+
+<<grafpor, include=FALSE,echo=FALSE, fig.width=7,fig.height=3,cache=TRUE>>=
+library(scales)
+svyratio(~num.tablas,~I(num.graficas+num.tablas), des.upm)
+dat.boot <- rdply(250, function(i){
+  datos.upm[sample(1:nrow(datos.upm), nrow(datos.upm), replace=T),]
+})
+g4 <- ggplot(datos.upm, aes(x=año,y=100*(num.graficas+num.tablas+1)/num.paginas)) + geom_jitter() +
+  geom_smooth(data=dat.boot, aes(x=año, y=100*(num.graficas+num.tablas+1)/num.paginas,group=.n),
+se=FALSE, method='loess', family='symmetric', span=0.5, 
+    degree=1,color=alpha('salmon',0.2))+ scale_y_sqrt(breaks=c(5,25,50,100,200))+
+  geom_smooth(method='loess', family='symmetric', span=0.5,se=FALSE,degree=1) +
+  ylab('Núm de gráficas y tablas por 100p')
+
+g5 <- ggplot(datos.upm, aes(x=año,y=100*(num.tablas+1)/(num.tablas+num.graficas+1))) + geom_jitter() +
+  geom_smooth(data=dat.boot, aes(x=año, y=100*(num.tablas+1)/(num.tablas+num.graficas+1),group=.n),
+se=FALSE, method='loess', family='symmetric', span=0.5, 
+    degree=1,color=alpha('salmon',0.2))+ 
+  geom_smooth(method='loess', family='symmetric', span=0.5,se=FALSE,degree=1) +
+  ylab('% de gráficas vs gráficas y tablas')
+grid.arrange(g4,g5,nrow=1)
+@
+\begin{figure}[!h]
+\centering
+\includegraphics[width=12cm]{./figure/grafpor.pdf}
+\caption{Graficas de datos y tablas por año. Bandas construidas con 200 replicaciones
+bootstrap de un suavizamiento loess.}
+\end{figure}
+
+
+
+
+
+
+<<calc.1, echo=FALSE, include=FALSE>>=
+media.contiene.graf <- svymean(~num.graficas>0, des.upm)
+grafs.100pag <- svyratio(~I(100*num.graficas), ~I(num.paginas*(num.graficas>0)), des.upm )
+cuantiles.densidad <- svyquantile(~grafs.100p, quantiles=seq(0,0.9,0.1), design=des.upm.rep, 
+  return.replicates=T)
+cuant.rep <- melt(data.frame(cuantiles.densidad$replicates, rep=1:1000), id.var='rep')
+cuant.df <- ddply(cuant.rep, 'variable', summarise,
+  y=mean(value), ymin=quantile(value,0.025),
+  ymax=quantile(value, 0.975))
+@
+%\newgeometry{bottom=0.1cm}
+
+ Alrededor del 84\% $\pm 6$ de las tesis de actuaría
+ contiene por lo menos alguna gráfica de datos.
+  El número de gráficas por cada cien páginas
+ es de $18\pm3$, y  
+  el 90\% de las tesis
+ con más gráficas utilizan gráficas de manera intensiva
+ (más de $[27,50]$ gráficas por cada cien páginas. 
+ Abajo mostramos los cuantiles estimados, con algunas referencias más o menos conocidas.
+ \sidenote[][3cm]{Cleveland, William S., {\it The Elements of
 Graphing Data}, Hobart Press, 1994.
+
 
 \vspace{\baselineskip}
 
@@ -169,15 +222,37 @@ Wiley, 1983.}
 {Klugman, S. A., {\it Loss Models: From Data to Decisions},
 Wiley-Interscience, 2004.}
 } 
+<<graf1, include=FALSE,echo=FALSE,fig.width=4,fig.height=3, out.width='10cm', dev='pdf'>>=
+library(grid)
+library(gridExtra)
+referencias.graf <- data.frame(
+  ref=c('Cleveland', 'Venables', 'Pole','Hoaglin','Rossi','Klugman'),
+  valor=c(65,50,45,18,18,4), pos=c(65,50,45,14,18,4))
+g1 <- ggplot(datos.upm, aes(x=num.paginas, y=100*num.graficas/num.paginas)) + geom_point()+
+  ylab('Número de gráficas por 100 páginas') + xlab('Número de páginas')+
+  theme(plot.margin=unit(rep(0,4),'lines'))
+g2 <- ggplot(cuant.df, aes(x=variable, y=y, ymin=ymin, ymax=ymax))+ geom_linerange()+
+  geom_hline(data=referencias.graf, aes(yintercept=valor,label=ref), colour='salmon') +
+  annotate(geom='text', x=9, y=referencias.graf$pos+4, label=referencias.graf$ref,
+    col='gray', size=4.5) +
+ xlab('Proporción') + ylab('')+
+  theme(plot.margin=unit(rep(0,4),'lines'))+  geom_point(size=2.5)+
+  geom_linerange()
+#grid.arrange(g1, g2, ncol=2)
+g2
+@
+\begin{figure}[!h]
+\caption{Deciles estimados de número de gráficas de datos.}
 
-\begin{center}
-\includegraphics[keepaspectratio,width=12cm]{q_grafspag2.eps}
-\end{center}
+\centering
+\includegraphics[width=6cm]{./figure/graf1.pdf}
+\end{figure}
 
-Donde vemos también que no hay una relación simple entre
-el número de páginas y la densidad gráfica, aunque
-la gráfica de la izquierda suguiere que las tesis con
-densidades atípicamente altas tienden a ser cortas.
+
+%Donde vemos también que no hay una relación simple entre
+%el número de páginas y la densidad gráfica, aunque
+%la gráfica de la izquierda suguiere que las tesis con
+%densidades atípicamente altas tienden a ser cortas.
 
 Los tres casos que tienen densidad gráfica mayor
 al libro de Cleveland son interesantes: el mayor,
@@ -193,95 +268,273 @@ la conservación de la cartera}, que es atípica por el uso
 extensivo de histogramas (para representar distribuciones de
 pérdida).
 
-\margintable{
-\begin{tabular}{lrr}
-Tipo  & \% de tesis & \\
-\hline
-%Dispersión & 91 \textcolor{dgray}{5} \\
-Dispersión & 68 &\tiny{9} \\
-Barras & 51 &\tiny{10} \\
-Serie de tiempo & 51 &\tiny{ 10} \\
-Histograma & 20  &\tiny{7} \\
-Pay & 17 &\tiny{7} \\
-Caja y brazos & 9 &\tiny{ 5} \\
-Mapas & 4 &\tiny{4} \\
-Otras & 2 &\tiny{3} \\
-\end{tabular}
-
-{Estimaciones para la población de tesis
-con al menos una gráfica de datos, basadas en 102 tesis.
-}
-
-}
 
 
 
-\subsubsection{Tipos de gráficas}
+
+\subsection{Tipos de gráficas}
 
 Las gráficas más comunes son las dispersión (que no
-son series de tiempo). En la tabla de la derecha mostramos
+son series de tiempo). En la siguiente tabla  mostramos
 nuestras estimaciones para varias tipos de gráficas que
 fueron medidos para la población de tesis que tienen al
 menos una gráfica de datos.  
+<<include=FALSE, echo=FALSE>>=
+convertir.df <- function(obj){
+  data.frame(est=round(100*obj$ratio[,1]), ee=round(100*sqrt(obj$var)[,1]),var.nom=rownames(obj$ratio))
+}
+
+tipos.totalgraf <- svyratio(~DISPERSION+BARRAS+SERIE_TIEMPO+HISTOGRAMA+CIRCULAR+CAJAB+MAPAS+OTRAS,~cont.graf,des.1)
+contiene.tipo <- svyratio(~I(dispersion>0) + I(barras>0) +
+    I(stiempo>0)+I(histograma>0)+I(CIRCULAR>0)+I(cajab>0)+I(mapas>0)+I(otras>0),~I(num.graficas>0), des.upm)
+tipo.df <- convertir.df(tipos.totalgraf)
+contiene.df <- convertir.df(contiene.tipo)
+@
+<<include=FALSE>>=
+salida <- data.frame(tipo.df, contiene.df)[,c(1,2,3,4,5)]
+salida$var.nom <- c('Dispersión', 'Barras', 'Serie de tiempo', 
+  'Histograma', 'Circular','Caja y brazos', 'Mapas', 'Otras')
+rownames(salida) <- NULL
+names(salida) <- c('% de gráficas','ee','tipo','% de tesis','ee')
+@
+
+%\begin{margintable}
+<<echo=FALSE, results='asis'>>=
+tab.1 <- xtable(salida[c(3,1,2,4,5)], digits=0)
+tab.1$`ee` <- paste('\\textcolor{gray}{',tab.1$ee,'}')
+tab.1$`ee.1` <- paste('\\textcolor{gray}{',tab.1$ee.1,'}')
+names(tab.1)[c(3,5)] <- c('','')
+#tab.1.p <- print(tab.1)
+#print(corregir(tab.1.p))
+print.xtable.2(tab.1)
+@
+%\end{margintable}
+
+\vspace{1cm}
+Las gráficas de barras son probablemente sobreutilizadas, y podrían sustituirse
+con otro tipo o con tablas. El uso de pays es considerable.
+
+
+Existen claras correlaciones entre la aparición de distintos tipos
+de gráficas dependiendo de la tesis: a grandes rasgos, las gráficas de
+barras y circulares tienden a aparecer juntas: son tesis que podrían parecer
+presentaciones de {\em marketing}. Por otra parte, tenemos también algunas tesis
+que utilizan gráficas más comunes en la estadística, como histogramas
+y gráficas de dispersión:
+
+\begin{marginfigure}[14cm]
+  \includegraphics[width=3cm]{./figure/graf3.pdf}
+  \caption{Replicaciones bootstrap de la gráfica de la izquierda}
+\end{marginfigure}
+
+<<graf2, include=FALSE,echo=FALSE,fig.width=5,fig.height=5, out.width='10cm', dev='pdf'>>=
+nom.grafs <- toupper(c('dispersion','barras','mapas','circular','serie_tiempo','histograma',
+  'cajab','otras'))
+
+datos.m <- subset(melt(datos[, c('ID',nom.grafs)],id.vars='ID'), value>0)
+datos.m.2 <- ddply(datos.m, c('ID','variable'), summarise, value=sum(value))
+library(arules)
+trans <- as(split(as.character(datos.m.2$variable), datos.m.2$ID), 'transactions')
+relaciones <- apriori(trans, parameter=list(supp=0.01,conf=0.01, target='rules', maxlen=2,minlen=2, ext=T))
+relaciones.2 <- subset(relaciones, lhs.support > 0.05 & lift>1 )
+inspect(relaciones.2)
+library(arulesViz)
+#saveAsGraph(relaciones.2, file='./out/relaciones.graphml')
+library(reshape2)
+xx <- dcast(datos.m.2, ID~variable, fill=0)
+xx.1 <- xx[sample(1:nrow(xx),nrow(xx), replace=T),]
+comps.1 <- prcomp(xx[,-c(1,4,9)]>0, center=T, scale=F)
+#biplot(comps.1)
+comps.df <- data.frame(comps.1$x[,1:2])
+load.df <- data.frame(comps.1$rotation[,1:2])
+load.df$nom <- tolower(rownames(load.df))
+ggplot(comps.df, aes(x=PC1, y=PC2))+ geom_jitter(position=position_jitter(width=0.2, height=0.2),
+  col='gray') +
+  geom_segment(data=load.df, aes(xend=2*PC1, yend=2*PC2,x=0,y=0,label=nom), colour='salmon')+
+  geom_text(data=load.df, aes(x=2*PC1,y=2*PC2,label=nom),size=5, colour='black')+
+  theme(axis.text.x=theme_blank(), axis.text.y=theme_blank(), axis.ticks.x=theme_blank(),
+    axis.ticks.y=theme_blank()) + xlab('')+ylab('')  
+@
+\begin{figure}[!h]
+\centering
+\caption{Biplot de primeras dos componentes principales para tabla binaria de tesis por tipo de gráficas}
+\includegraphics[width=7.5cm]{./figure/graf2.pdf}
+\end{figure}
+<<graf3,include=FALSE, echo=FALSE,dev='pdf',fig.width=4,fig.height=10>>=
+xx.1 <- xx[sample(1:nrow(xx),nrow(xx), replace=T),]
+comps.1 <- prcomp(xx.1[,-c(1,4,9)]>0, center=T, scale=F)
+#biplot(comps.1)
+comps.df <- data.frame(comps.1$x[,1:2])
+load.df <- data.frame(comps.1$rotation[,1:2])
+load.df$nom <- tolower(rownames(load.df))
+g1 <- ggplot(comps.df, aes(x=PC1, y=PC2))+ geom_jitter(position=position_jitter(width=0.2, height=0.2),
+  col='gray') +
+  geom_segment(data=load.df, aes(xend=2*PC1, yend=2*PC2,x=0,y=0,label=nom), colour='salmon')+
+  geom_text(data=load.df, aes(x=2*PC1,y=2*PC2,label=nom),size=5, colour='black')+
+  theme(axis.text.x=theme_blank(), axis.text.y=theme_blank(), axis.ticks.x=theme_blank(),
+    axis.ticks.y=theme_blank()) + xlab('')+ylab('')
+xx.1 <- xx[sample(1:nrow(xx),nrow(xx), replace=T),]
+comps.1 <- prcomp(xx.1[,-c(1,4,9)]>0, center=T, scale=F)
+#biplot(comps.1)
+comps.df <- data.frame(comps.1$x[,1:2])
+load.df <- data.frame(comps.1$rotation[,1:2])
+load.df$nom <- tolower(rownames(load.df))
+g2 <- ggplot(comps.df, aes(x=PC1, y=PC2))+ geom_jitter(position=position_jitter(width=0.2, height=0.2),
+  col='gray') +
+  geom_segment(data=load.df, aes(xend=2*PC1, yend=2*PC2,x=0,y=0,label=nom), colour='salmon')+
+  geom_text(data=load.df, aes(x=2*PC1,y=2*PC2,label=nom),size=5, colour='black')+
+  theme(axis.text.x=theme_blank(), axis.text.y=theme_blank(), axis.ticks.x=theme_blank(),
+    axis.ticks.y=theme_blank()) + xlab('')+ylab('')  
+xx.1 <- xx[sample(1:nrow(xx),nrow(xx), replace=T),]
+comps.1 <- prcomp(xx.1[,-c(1,4,9)]>0, center=T, scale=F)
+#biplot(comps.1)
+comps.df <- data.frame(comps.1$x[,1:2])
+load.df <- data.frame(comps.1$rotation[,1:2])
+load.df$nom <- tolower(rownames(load.df))
+g3 <- ggplot(comps.df, aes(x=PC1, y=PC2))+ geom_jitter(position=position_jitter(width=0.2, height=0.2),
+  col='gray') +
+  geom_segment(data=load.df, aes(xend=2*PC1, yend=2*PC2,x=0,y=0,label=nom), colour='salmon')+
+  geom_text(data=load.df, aes(x=2*PC1,y=2*PC2,label=nom),size=5, colour='black')+
+  theme(axis.text.x=theme_blank(), axis.text.y=theme_blank(), axis.ticks.x=theme_blank(),
+    axis.ticks.y=theme_blank()) + xlab('')+ylab('')  
+grid.arrange(g1,g2,g3,ncol=1)
+@
 
 
 
 
-\subsubsection{Indicadores básicos de calidad gráfica}
+<<include=FALSE, echo=FALSE>>=
+library(Hmisc)
+xx$cluster <- cutree(hclust(dist(comps.df), method='ward'),6)
+yy <- arrange(xx, comps.df$PC1 + scale(comps.df$PC2^2) )[,c(1,2,7,8,5,3,6,10)]
+yy$ID <- factor(yy$ID, levels=yy$ID)
+yy <- melt(yy, id.vars=c('ID','cluster'))
+yy <- arrange(yy, cluster)
+names(yy) <- c('dim','var','variable','value')
+yy$var <- as.character(yy$var)
+yy$color <- cut2(yy$value, g=4)
+yy$value[yy$value==0] <- ''
+#tabla_grafica(yy)
+@
+
+
+
+
+
+
+\subsection{Indicadores básicos de calidad gráfica}
 
 En nuestro estudio tenemos dos indicadores básicos de la 
 calidad de cada gráfica:
+\begin{marginfigure}
+\includegraphics[width=3cm]{../doc/efecto_3d}
+\includegraphics[width=3cm]{../doc/rejilla.png}
+\includegraphics[width=3cm]{../doc/trama.png}
+\caption{Tipos de basura gráfica: efecto 3d, rejilla, trama}
+\end{marginfigure}
+
 \begin{itemize}
 \item Contenido de basura gráfica ({\em chartjunk} de Tufte, 
 como efectos 3d, {\em grid} o rejillas
 que ocultan o dificultan la percepción de los puntos de datos, marcos 
  superfluos, etc.).
 \item Si la explicación de la gráfica está en la misma página de la gráfica o
-no. En el trabajo gráfico serio texto, tablas, diagramas y gráficas se
-integran para mostrar la evidencia (**Tufte**).    
+no. En el mejor trabajo gráfico texto, tablas, diagramas y gráficas se
+integran para explicar los datos.
+\item Uso de pequeños múltiplos, que consisten en la replicación de un mismo
+diseño y variando los datos en cada replicación.
 \end{itemize}
 
-**Basura**
-Series de tiempo ok - el caso grave es el de las gráficas de barras.
-Por tesis, mostrar ejemplos - collage!
 
-Hablar también de barras de 3+ variables - este es un problema
+<<graftiempo, fig.width=3,fig.height=3,dev='pdf',include=FALSE,echo=FALSE>>=
+#svyratio(~I(cont.basura>0),~cont.graf,des.1)
+#svyratio(~I(cont.basura>0),~I(grafs.100p>0), des.upm)
+#svymean(~I(cont.basura>0), des.upm)
 
-**Explicación en la misma página - agregado
+basura.año <- svyby(~I(cont.basura>0),~I(cut(año,breaks=c(1989,1995,2000,2005,2008))), FUN=svymean, design=des.upm)
+basura.año.df <- data.frame(est=basura.año[[3]],ee=basura.año[[5]], año=basura.año[[1]])
+ggplot(basura.año.df, aes(x=año,y=100*est,ymin=100*(est-2*ee),ymax=100*(est+2*ee))) +
+  geom_point()+geom_linerange()
+@
 
+%\begin{marginfigure}
+%  \includegraphics[width=4cm]{./figure/graftiempo.pdf}
+%  \caption{\% de tesis con basura gráfica}
+%\end{marginfigure}
 
-
-
-
-\subsubsection{Otros resultados}
-En el tiempo, tablas, discutir gráficas analíticas, número
-de páginas por tesis, también en el tiempo.
-
-
-\subsubsection{Metodología}
-
-Describir marco muestral
-
-Muestreo aleatorio por conglomerados - parte bietápica para
-otra ocasión. 
-
-Describir cuestionario y problemas que se encontraron
-**Nota: revisar la cuestión de bietápico con UPMs chicas**
-
-**Multipanel - poco usado
+Entre las tesis que contienen gráficas, el 75\%$\pm7$ contiene algún tipo
+de basura gráfica, y el 47\% $\pm 7$ de las gráficas totales contiene algún
+tipo de basura. Estos números indican que las tesis no se dividen claramente
+en tesis sin basura y con basura.
 
 
-Describir funcionamiento de grupo.
+Distintos tipos de basura gráfica están asociados a distintos tipos de gráficas:
 
-\subsubsection{Antecedentes}
+<<grafbasura,include=FALSE, echo=FALSE,fig.width=8,fig.height=2.5>>=
+convertir.df <- function(obj, tipo='',nombres){
+  data.frame(est=round(100*obj$ratio[,1]), ee=round(100*sqrt(obj$var)[,1]),var.nom=nombres, tipo=tipo)
+}
+svyratio(~una.var+graf_sola, ~cont.graf, des.1)
+total.ind <- svyratio(~REJILLA+TRAMA+X3D+ +
+    NO_EXPLIC+graf_sola,~cont.graf, des.1)
+dispersion <- svyratio(~I(REJILLA*DISPERSION)+I(TRAMA*DISPERSION) +I(X3D*DISPERSION)+
+    I(NO_EXPLIC*DISPERSION)+I(graf_sola*DISPERSION),
+  ~DISPERSION,des.1)
+barras <- svyratio(~I(REJILLA*BARRAS)+I(TRAMA*BARRAS) +I(X3D*BARRAS)+I(NO_EXPLIC*BARRAS)+I(graf_sola*BARRAS),
+  ~BARRAS,des.1)
+circular <- svyratio(~I(REJILLA*CIRCULAR)+I(TRAMA*CIRCULAR) +I(X3D*CIRCULAR)+I(NO_EXPLIC*CIRCULAR)+I(graf_sola*CIRCULAR),
+  ~CIRCULAR,des.1)
+serie <- svyratio(~I(REJILLA*SERIE_TIEMPO)+I(TRAMA*SERIE_TIEMPO) +I(X3D*SERIE_TIEMPO)+I(NO_EXPLIC*SERIE_TIEMPO)+I(graf_sola*SERIE_TIEMPO),
+  ~SERIE_TIEMPO,des.1)
+histograma <- svyratio(~I(REJILLA*HISTOGRAMA)+I(TRAMA*HISTOGRAMA) +I(X3D*HISTOGRAMA)+I(NO_EXPLIC*HISTOGRAMA)+I(graf_sola*HISTOGRAMA),
+  ~HISTOGRAMA,des.1)
+cajab <- svyratio(~I(REJILLA*CAJAB)+I(TRAMA*CAJAB) +I(X3D*CAJAB)+I(NO_EXPLIC*CAJAB)+I(graf_sola*CAJAB),
+  ~CAJAB,des.1)
+nombres <- c('Rejilla','Trama', '3D','Sin explicación','Gráfica sola')
+df.1 <- convertir.df(cajab, tipo='Caja y brazos', nom=nombres)
+df.2 <- convertir.df(histograma, tipo='Histograma', nom=nombres)
+df.3 <- convertir.df(circular, tipo='Circular', nom=nombres)
+df.4 <- convertir.df(barras, tipo='Barras', nom=nombres)
+df.5 <- convertir.df(serie, tipo='Líneas', nom=nombres)
+df.6 <- convertir.df(dispersion, tipo='Dispersión', nom=nombres)
+total.df <- convertir.df(total.ind, tipo='Total',nom=nombres)
+total.df$tipo <- NULL
+names(total.df)[1:2] <- c('est.t','ee.t')
+datos.basura <- rbind(df.2,df.3,df.4,df.5,df.6)
+datos.basura$tipo <- reorder(datos.basura$tipo, datos.basura$est, mean)
+datos.basura.2 <- join(datos.basura, total.df)
+ggplot(datos.basura.2, aes(x=tipo, ymin=est-2*ee,ymax=est+2*ee,y=est)) +
+  #geom_ribbon( aes(ymin=est.t-2*ee.t,ymax=est.t+2*ee.t),size=10, colour='salmon',alpha=0.3)+
+  geom_linerange(aes(ymin=est-2*ee,ymax=est+2*ee),colour='gray') + facet_wrap(~var.nom, nrow=1)+ 
+  geom_point()+
+  coord_flip() + ylab('%')+xlab('')
+  
+@
 
-Explicación de basura gráfica, por qué es importante esto
-(oportunidades perdidas, claridad, etc.)
+\begin{figure*}
+\centering
+\caption{Tipos de basura gráfica registrados según tipo de gráfica. Los criterios
+de basura gráfica son subjetivos (una rejilla se considera basura
+si tiene un grosor y color similar a los datos graficados, por ejemplo). Gráfica sola indica que la gráfica no aparece junto a otra para comparar, y Sin explicación indica que la explicación de la gráfica se encuentra en otra página.}
+\includegraphics{./figure/grafbasura.pdf}
+\end{figure*}
 
 
 
-\bibliographystyle{plain}
-\bibliography{referencias}
+
+
+
+
+\subsection{Datos y diseño}
+
+Se seleccionó una muestra aleatoria simple de tesis de Actuaría registradas
+en la biblioteca con fecha entre 1990 y 2007 (Abril 2008). No se pudieron encontrar
+3 de las 125 tesis seleccionadas en la muestra. Se registraron todas
+las gráficas (separadas en gráficas de datos y gráficas analíticas según
+criterios establecidos) contenidas en cada tesis seleccionadas, y cada
+una se clasificó según su tipo y su contenido de basura gráfica. Los criterios
+para basura gráfica son apreciativos: los estudiantes que levantaron los datos
+fueron primero entrenados para regularizar en lo más posible los criterios.
 
 
 
